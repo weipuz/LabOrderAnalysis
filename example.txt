@@ -1,5 +1,0 @@
-(resultOnly_numeric,8161)
-(resultOnly_posneg,131)
-(resultOnly_range,23)
-(resultOnly_unit,8)
-(resultOnly_other,930)
