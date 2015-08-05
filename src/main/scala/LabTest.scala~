@@ -1,0 +1,67 @@
+package vch.ds.bigdata
+
+import com.microsoft.sqlserver.jdbc.SQLServerDriver
+import org.apache.spark.SparkContext
+import org.apache.spark.SparkContext._
+import org.apache.spark.SparkConf
+
+
+object LabTest {
+
+//function to detect if a given string is integer
+def isNumeric2(input: String): Boolean = input.forall(_.isDigit)
+
+//function to detect if a given sting could be convert to double or long int
+def throwsNumberFormatException(f: => Any): Boolean = {
+  try { f; false } catch { case e: NumberFormatException => true }
+}
+def isNumeric(str: String): Boolean = {
+  !throwsNumberFormatException(str.toLong) || !throwsNumberFormatException(str.toDouble)
+}
+
+/* 
+def splitResult(str: String): Array[String] = {
+  val result = str.split(".br")
+  if (result.length == 2) {
+  return Array(result(0).stripSuffix("\\"), result(1).stripPrefix("\\"))
+  }
+  else if(result.length > 2) {
+  return Array(result(0).stripSuffix("\\"), result.tail.mkString(".br").stripPrefix("\\"))
+  }
+  else{
+  return Array(result(0), null)
+  }
+
+}
+*/
+
+//function to split result string by delimiter "\.br\". Using double \\ to declare it is not escape character. 
+def splitResult(str: String): Array[String] = {
+  val result = str.split("""\\.br\\""")
+  if (result.length == 2) {
+  return Array(result(0), result(1))
+  }
+  else if(result.length > 2) {
+  return Array(result(0), result.tail.mkString("""\.br\"""))
+  }
+  else{
+  return Array(result(0), null)
+  }
+
+}
+
+
+def main(args: Array[String]) {
+val sc = new SparkContext // An existing SparkContext.
+val sqlContext = new org.apache.spark.sql.SQLContext(sc)
+
+//load data from SQL SERVER into jdbcDF 
+//TODO:security waring: this piece of code contains major user auth information. Need to be encrypted later.
+val jdbcDF = sqlContext.load("jdbc", Map(
+  "driver" -> "com.microsoft.sqlserver.jdbc.SQLServerDriver",
+  "url" -> "jdbc:sqlserver://STDBDECSUP01;databaseName=BigData;user=BigData;password=DecisionSupport2015!",
+  "dbtable" -> "dbo.LabTest10k"))
+jdbcDF.show()
+
+}
+}

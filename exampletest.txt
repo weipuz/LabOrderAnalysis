@@ -1,0 +1,5 @@
+(resultOnly_numeric,720735)
+(resultOnly_posneg,35153)
+(resultOnly_range,6591)
+(resultOnly_unit,205)
+(resultOnly_other,165951)
